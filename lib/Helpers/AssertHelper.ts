@@ -3,7 +3,7 @@
 import { ResponseEnvelope, ui } from 'ask-sdk-model'
 import { expect } from 'chai';
 
-export class AssertHelper {
+export default class AssertHelper {
     checkResponseStructure(response: ResponseEnvelope): void {
         expect(response).to.have.property("version");
         expect(response.version).to.be.equal("1.0");
@@ -26,7 +26,7 @@ export class AssertHelper {
         expect(os.ssml).to.match(/<\/speak>$/);
     }
 
-    checkOutputSpeachContains(response: ResponseEnvelope, text: string): void {
+    checkOutputSpeechContains(response: ResponseEnvelope, text: string): void {
 
         expect(response).to.have.property("response");
         let r = response.response;
@@ -60,7 +60,7 @@ export class AssertHelper {
         expect(os.ssml).to.match(/<\/speak>$/);
     }
 
-    checkOutputSpeachDoesNotContains(response: ResponseEnvelope, text: string): void {
+    checkOutputSpeechDoesNotContains(response: ResponseEnvelope, text: string): void {
 
         expect(response).to.have.property("response");
         let r = response.response;

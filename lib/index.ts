@@ -1,3 +1,3 @@
-import { AssertHelper } from "./Helpers/AssertHelper";
+import AssertHelper from "./Helpers/AssertHelper";
 
 export { AssertHelper };
