@@ -1,8 +1,6 @@
-'use strict';
-
 import 'mocha';
-import {expect, assert } from 'chai';
-import AssertHelper from '../../lib/Helpers/AssertHelper';
+import { expect, assert } from 'chai';
+import AssertHelper from '../src/Helpers/AssertHelper';
 
 let assertHelper: AssertHelper;
 

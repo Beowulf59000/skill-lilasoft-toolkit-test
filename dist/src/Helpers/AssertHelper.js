@@ -18,7 +18,7 @@ class AssertHelper {
         chai_1.expect(os.ssml).to.match(/^<speak>/);
         chai_1.expect(os.ssml).to.match(/<\/speak>$/);
     }
-    checkOutputSpeachContains(response, text) {
+    checkOutputSpeechContains(response, text) {
         chai_1.expect(response).to.have.property("response");
         let r = response.response;
         chai_1.expect(r).to.have.property("outputSpeech");
@@ -44,7 +44,7 @@ class AssertHelper {
         chai_1.expect(os.ssml).to.match(/^<speak>/);
         chai_1.expect(os.ssml).to.match(/<\/speak>$/);
     }
-    checkOutputSpeachDoesNotContains(response, text) {
+    checkOutputSpeechDoesNotContains(response, text) {
         chai_1.expect(response).to.have.property("response");
         let r = response.response;
         chai_1.expect(r).to.have.property("outputSpeech");
@@ -91,6 +91,6 @@ class AssertHelper {
         chai_1.expect(r).to.not.have.property("reprompt");
     }
 }
-exports.AssertHelper = AssertHelper;
+exports.default = AssertHelper;
 ;
 //# sourceMappingURL=AssertHelper.js.map
