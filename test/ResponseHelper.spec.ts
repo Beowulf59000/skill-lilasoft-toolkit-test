@@ -1,7 +1,8 @@
-import {ResponseEnvelope} from 'ask-sdk-model';
+import {ResponseEnvelope, Response, ui} from 'ask-sdk-model';
 import 'mocha';
+import * as sinon from "ts-sinon";
 import { expect, assert } from 'chai';
-import ResponseHelper from '../src/Helpers/ResponseHelper';
+import { ResponseHelper } from '../src/index';
 
 let responseHelper: ResponseHelper;
 
@@ -10,81 +11,92 @@ describe('ResponseHelper', () => {
         this.responseHelper = new ResponseHelper();
     });
 
-    describe('getResponseFromResponseEnvelope', () => {
-        it('it should return undefined when responseEnvelope does not have property version', () => {
-            let responseEnvelope: ResponseEnvelope = {
-                version: undefined,
-                response: undefined
-            };
-            let response = this.responseHelper.getResponseFromResponseEnvelope(responseEnvelope);
-            expect(response).to.be.undefined;
+    describe('getSsmlOutputSpeechFromResponse', () => {
+        it('it should throw TypeError when response is undefined', () => {
+            let response: Response;
+            let fn = () => this.responseHelper.getSsmlOutputSpeechFromResponse(response);
+            assert.throws(fn, TypeError, "Cannot read property 'outputSpeech' of undefined");      
         });
 
-        it('it should return undefined when responseEnvelope does have wrong version', () => {
-            let responseEnvelope: ResponseEnvelope = {
-                version: "0.5",
-                response: undefined
+        it('it should return undefined when response.outputSpeech is undefined', () => {
+            let response: Response = {
+                outputSpeech: undefined
             };
-            let response = this.responseHelper.getResponseFromResponseEnvelope(responseEnvelope);
-            expect(response).to.be.undefined;
+            let ssmlOutputSpeech = this.responseHelper.getSsmlOutputSpeechFromResponse(response);
+            assert.isUndefined(ssmlOutputSpeech);
         });
 
-        it('it should return undefined when response is undefined', () => {
-            let responseEnvelope: ResponseEnvelope= {
-                version: "1.0",
-                response: undefined
+        it('it should return SsmlOutputSpeech when response.outputSpeech is defined', () => {
+            let response: Response = {
+                outputSpeech: { type: undefined, text: undefined }
             };
-            let response = this.responseHelper.getResponseFromResponseEnvelope(responseEnvelope);
-            expect(response).to.be.undefined;
-        });
-
-        it('it should return response when response is undefined', () => {
-            let responseEnvelope: ResponseEnvelope= {
-                version: "1.0",
-                response: {}
-            };
-            let response = this.responseHelper.getResponseFromResponseEnvelope(responseEnvelope);
-            expect(response).to.be.not.undefined;
+            let ssmlOutputSpeech = this.responseHelper.getSsmlOutputSpeechFromResponse(response);
+            assert.isDefined(ssmlOutputSpeech);        
         });
     });
 
-        //     expect(responseEnvelope).to.have.property("version");
-    //     expect(responseEnvelope.version).to.be.equal("1.0");
-    //     expect(responseEnvelope).to.have.property("response");
+    describe('getSessionStatusFromResponse', () => {
+        it('it should throw TypeError when response is undefined', () => {
+            let response: Response;
+            let fn = () => this.responseHelper.getSessionStatusFromResponse(response);
+            assert.throws(fn, TypeError, "Cannot read property 'shouldEndSession' of undefined");      
+        });
 
-    // it('checkResponseStructure must be defined', () => {
-    //     expect(assertHelper.checkResponseStructure).to.be.not.undefined;
-    // });
+        it('it should return undefined when response.shouldEndSession is undefined', () => {
+            let response: Response = {
+                shouldEndSession: undefined
+            };
+            let shouldEndSession = this.responseHelper.getSessionStatusFromResponse(response);
+            assert.isUndefined(shouldEndSession);
+        });
 
-    // it('checkOutputSpeech must be defined', () => {
-    //     expect(assertHelper.checkOutputSpeech).to.be.not.undefined;
-    // });
+        it('it should return value when response.shouldEndSession is defined', () => {
+            let response: Response = {
+                shouldEndSession: true
+            };
+            let shouldEndSession = this.responseHelper.getSessionStatusFromResponse(response);
+            assert.isTrue(shouldEndSession);        
+        });
+    });
 
-    // it('checkOutputSpeechContains must be defined', () => {
-    //     expect(assertHelper.checkOutputSpeechContains).to.be.not.undefined;
-    // });
+    describe('getStandardCardFromResponse', () => {
+        it('it should throw TypeError when response is undefined', () => {
+            let response: Response;
+            let fn = () => this.responseHelper.getStandardCardFromResponse(response);
+            assert.throws(fn, TypeError, "Cannot read property 'card' of undefined");      
+        });
 
-    // it('checkOutputSpeechContainsList must be defined', () => {
-    //     expect(assertHelper.checkOutputSpeechContainsList).to.be.not.undefined;
-    // });
+        it('it should throw TypeError when response card is undefined', () => {
+            let response: Response = {
+                card: undefined
+            };
+            let fn = () => this.responseHelper.getStandardCardFromResponse(response);
+            assert.throws(fn, TypeError, "Cannot read property 'type' of undefined");      
+        });
 
-    // it('checkOutputSpeechDoesNotContains must be defined', () => {
-    //     expect(assertHelper.checkOutputSpeechDoesNotContains).to.be.not.undefined;
-    // });
+        it('it should return undefined when card type is Simple', () => {
+            let response: Response = {
+                card: { 
+                    type: 'Simple' 
+                }
+            };
+            let card = this.responseHelper.getStandardCardFromResponse(response);
+            assert.isUndefined(card);
+        });
 
-    // it('checkSessionStatus must be defined', () => {
-    //     expect(assertHelper.checkResponseStructure).to.be.not.undefined;
-    // });
-
-    // it('checkStandardCard must be defined', () => {
-    //     expect(assertHelper.checkOutputSpeech).to.be.not.undefined;
-    // });
-
-    // it('checkReprompt must be defined', () => {
-    //     expect(assertHelper.checkOutputSpeechContains).to.be.not.undefined;
-    // });
-
-    // it('checkNoReprompt must be defined', () => {
-    //     expect(assertHelper.checkOutputSpeechContainsList).to.be.not.undefined;
-    // });
+        it('it should return card when card type is Standard', () => {
+            let response: Response = {
+                card: { 
+                    type: 'Standard',
+                    title: 'Title',
+                    text: 'Text' 
+                }
+            };
+            let card = this.responseHelper.getStandardCardFromResponse(response);
+            assert.isDefined(card);
+            assert.equal(card.type, 'Standard');
+            assert.equal(card.title, 'Title');
+            assert.equal(card.text, 'Text');
+        });
+    });
 });
