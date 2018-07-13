@@ -1,3 +1,3 @@
-import AssertHelper from "./Helpers/AssertHelper";
+import ResponseHelper from "./Helpers/ResponseHelper";
 
-export { AssertHelper };
+export { ResponseHelper };

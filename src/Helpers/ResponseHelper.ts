@@ -4,7 +4,9 @@ import { ResponseEnvelope, Response, ui } from 'ask-sdk-model'
 
 export default class ResponseHelper {
     getResponseFromResponseEnvelope(responseEnvelope: ResponseEnvelope): Response {
-        return responseEnvelope.response;
+        return (responseEnvelope.version === "1.0") ?
+            responseEnvelope.response
+            : undefined;
     }
 
     getSsmlOutputSpeechFromResponse(response: Response): ui.SsmlOutputSpeech {
